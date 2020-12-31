@@ -48,10 +48,6 @@
 				Date:
 				<input class="alignRight" type="text" id="date" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
 			</p>
-			<p>
-				Rank:
-				<input class="alignRight" type="text" id="rank" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
-			</p>
 			
 			<hr>
 			
@@ -109,7 +105,6 @@ Trooper Patrol Log
 ---
 Username: 
 Date: 
-Rank:
 Time Started: 
 Time Ended: 
 Proof:
@@ -176,8 +171,6 @@ Supervisor Signature:
 		if (checkEmpty(username, "Must enter username!")) return;
 		let date = document.getElementById("date").value;
 		if (checkEmpty(date, "Must enter date!")) return;
-		let rank = document.getElementById("rank").value;
-		if (checkEmpty(rank, "Must enter rank!")) return;
 		let timeStart = document.getElementById("startTime").value;
 		if (checkEmpty(timeStart, "Must enter start time!")) return;
 		let timeEnd = document.getElementById("endTime").value;
@@ -193,8 +186,8 @@ Supervisor Signature:
 		
 		let extraNotes = document.getElementById("extraNotes").value.trim();
 		
-		timeStartConv = convertTime12to24(timeStart + " " + timeStartAMPM);
-		timeEndConv = convertTime12to24(timeEnd + " " + timeEndAMPM);
+		let timeStartConv = convertTime12to24(timeStart + " " + timeStartAMPM);
+		let timeEndConv = convertTime12to24(timeEnd + " " + timeEndAMPM);
 		
 		timeStart = timeStartConv.split(":");
 		timeEnd = timeEndConv.split(":");
@@ -227,7 +220,6 @@ Trooper Patrol Log
 ---
 Username: ${username}
 Date: ${date}
-Rank: ${rank}
 Time Started: ${timeStartConv} ${timezone} (24-hour time)
 Time Ended: ${timeEndConv} ${timezone} (24-hour time)
 Proof: ${startProof} | ${endProof}

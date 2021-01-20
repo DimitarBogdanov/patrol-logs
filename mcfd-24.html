@@ -1,0 +1,257 @@
+<html>
+	<head>
+		<title>MCFD Shift Log</title>
+		<meta charset="UTF-8">
+		
+		<style>
+		body {
+			font-family: Verdana, sans-serif;
+		}
+		textarea {
+			resize: none;
+		}
+		
+		.box {
+			width: 330px;
+			border: 1px solid;
+			padding: 5px 5px 5px 5px;
+		}
+		.alignRight {
+			float: right;
+			clear: both;
+		}
+		.genBtn {
+			width: 100%;
+			height: 40px;
+			font-size: 20
+		}
+		.hide {
+			display: none;
+		}
+		.fillWidth {
+			width: 100%;
+		}
+		</style>
+	</head>
+	<body>
+		<h3><a href="./mcfd-12.html">LINK TO 12-HOUR FORMAT VERSION</a></h3>
+		<br>
+		<br>
+		
+		<div class="box" id="enterValues">
+			<center><h2>Shift Log</h2>Mano County Fire Department</br></center>
+			<hr>
+			
+			<p>
+				Username:
+				<input class="alignRight" type="text" id="username" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			<p>
+				Rank:
+				<input class="alignRight" type="text" id="rank" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			<p>
+				Date:
+				<input class="alignRight" type="text" id="date" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			<p>
+				Battalion:
+				<input class="alignRight" type="text" id="battalion" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			<p>
+				Rig:
+				<input class="alignRight" type="text" id="rig" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			
+			<hr>
+			
+			<p style="display: inline;">
+				Time of start:
+				<div class="alignRight">
+					<input type="text" id="startTime" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+				</div>
+			</p>
+			<p style="display: inline;">
+				Time of end:
+				<div class="alignRight">
+					<input type="text" id="endTime" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+				</div>
+			</p>
+			<p>
+				Timezone:
+				<input class="alignRight" type="text" id="timezone" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			
+			<hr>
+			
+			<p>
+				Start proof:
+				<input class="alignRight" type="text" id="startProof" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			<p>
+				End proof:
+				<input class="alignRight" type="text" id="endProof" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			
+			<hr>
+			
+			<p>
+				<input type="checkbox" id="extraNotesBtn" onclick="toggleExtraNotes()">Include extra notes?</input>
+				<textarea rows="8" id="extraNotes" class="hide" placeholder="Enter extra notes here." class="hide"></textarea>
+			</p>
+			
+			<button class="genBtn" onclick="generate()">GENERATE</button>
+		</div>
+		
+		<div class="hide" id="finalDiv">
+			<h2>SHIFT LOG</h2>
+			<p>Paste this in the shift log channel.</p>
+			
+			<textarea readonly rows="25" cols="80" id="final">
+---
+Mano County Fire Department
+Firefighter Shift Log
+
+---
+Username:
+Rank:
+Date:
+Start Time:
+Start Proof:
+End Time:
+End Proof:
+Total Duration:
+Battalion:
+Rig:
+
+---
+Supervisor Signature:
+			</textarea>
+			
+			<br> <br>
+			<button class="genBtn" style="width:200px;" onclick="goBack()">GO BACK</button>
+		</div>
+	</body>
+	
+	<script>
+	// Give the date field a default value
+	var today = new Date();
+	var dd = String(today.getDate()).padStart(2, '0');
+	var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+	var yyyy = today.getFullYear();
+
+	today = mm + '/' + dd + '/' + yyyy;
+	document.getElementById("date").value = today;
+	
+	function checkEmpty(value, err) {
+		if (value.trim() == "") {
+			alert(err);
+			return true;
+		}
+		return false;
+	}
+	
+	function generate() {
+		let username = document.getElementById("username").value;
+		if (checkEmpty(username, "Must enter username!")) return;
+		let rank = document.getElementById("date").value;
+		if (checkEmpty(rank, "Must enter rank!")) return;
+		let date = document.getElementById("date").value;
+		if (checkEmpty(date, "Must enter date!")) return;
+		let battalion = document.getElementById("battalion").value;
+		if (checkEmpty(battalion, "Must enter battalion!")) return;
+		let rig = document.getElementById("rig").value;
+		if (checkEmpty(rig, "Must enter rig #!")) return;
+		let timeStart = document.getElementById("startTime").value;
+		if (checkEmpty(timeStart, "Must enter start time!")) return;
+		let timeEnd = document.getElementById("endTime").value;
+		if (checkEmpty(timeEnd, "Must enter end time!")) return;
+		let timezone = document.getElementById("timezone").value;
+		if (checkEmpty(timezone, "Must enter timezone!")) return;
+		let startProof = document.getElementById("startProof").value;
+		if (checkEmpty(startProof, "Must enter start proof!")) return;
+		let endProof = document.getElementById("endProof").value;
+		if (checkEmpty(endProof, "Must enter end proof!")) return;
+		
+		let extraNotes = document.getElementById("extraNotes").value.trim();
+		
+		var convert = true;
+		
+		timeStart = timeStart.split(":");
+		timeEnd = timeEnd.split(":");
+		
+		if (timeStart[0].length == 1) {
+			timeStart[0] = "0" + timeStart[0];
+		}
+		if (timeStart[1].length == 1) {
+			timeStart[1] = "0" + timeStart[1];
+		}
+		if (timeEnd[0].length == 1) {
+			timeEnd[0] = "0" + timeEnd[0];
+		}
+		if (timeEnd[1].length == 1) {
+			timeEnd[1] = "0" + timeEnd[1];
+		}
+		
+		
+		if (extraNotes != "") {
+			extraNotes = "Extra notes: " + extraNotes + "\n";
+		} else {
+			extraNotes = "";
+		}
+		
+		let dateStart = new Date(2018, 11, 24, parseInt(timeStart[0]), parseInt(timeStart[1]), 0, 0);
+		let dateEnd = new Date(2018, 11, 24, parseInt(timeEnd[0]), parseInt(timeEnd[1]), 0, 0);
+		let totalTime = (((dateEnd.getTime() - dateStart.getTime()) / 1000) / 60);
+		
+		timeStart = timeStart[0] + ":" + timeStart[1];
+		timeEnd = timeEnd[0] + ":" + timeEnd[1];
+		
+		if (totalTime < 0) {
+			dateEnd = new Date(2018, 11, 25, parseInt(timeEnd[0]), parseInt(timeEnd[1]), 0, 0);
+			totalTime = (((dateEnd.getTime() - dateStart.getTime()) / 1000) / 60);
+		}
+		
+		document.getElementById("final").innerHTML = `---
+Mano County Fire Department
+Firefighter Shift Log
+
+---
+Username: ${username}
+Rank: ${rank}
+Date: ${date}
+Start Time:  ${timeStart} ${timezone} (24-hour time)
+Start Proof: ${startProof}
+End Time: ${timeEnd} ${timezone} (24-hour time)
+End Proof: ${endProof}
+Total Duration: ${totalTime} minutes
+Battalion: ${battalion}
+Rig: ${rig}
+${extraNotes}
+
+---
+Supervisor Signature:
+`;
+		
+		document.getElementById("enterValues").className = "hide";
+		document.getElementById("finalDiv").className = "";
+	}
+	
+	function goBack() {
+		document.getElementById("enterValues").className = "box";
+		document.getElementById("finalDiv").className = "hide";
+	}
+	
+	function toggleExtraNotes() {
+		if (document.getElementById("extraNotesBtn").checked) {
+			document.getElementById("extraNotes").className = "fillWidth";
+			document.getElementById("extraNotes").innerHTML = "";
+			document.getElementById("extraNotes").value = "";
+		} else {
+			document.getElementById("extraNotes").className = "hide";
+			document.getElementById("extraNotes").innerHTML = "";
+			document.getElementById("extraNotes").value = "";
+		}
+	}
+	</script>
+</html>

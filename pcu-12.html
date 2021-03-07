@@ -1,0 +1,213 @@
+<html>
+	<head>
+		<title>Property Crime Unit Log</title>
+		<meta charset="UTF-8">
+		
+		<style>
+		body {
+			font-family: Verdana, sans-serif;
+		}
+		textarea {
+			resize: none;
+		}
+		
+		.box {
+			width: 330px;
+			border: 1px solid;
+			padding: 5px 5px 5px 5px;
+		}
+		.alignRight {
+			float: right;
+			clear: both;
+		}
+		.genBtn {
+			width: 100%;
+			height: 40px;
+			font-size: 20
+		}
+		.hide {
+			display: none;
+		}
+		.fillWidth {
+			width: 100%;
+		}
+		</style>
+	</head>
+	<body>
+		<h3><a href="./pcu-24.html">LINK TO 24-HOUR FORMAT VERSION</a></h3>
+		<br>
+		<br>
+		
+		<div class="box" id="enterValues">
+			<center><h2>Shift Log</h2>PSP - PROPERTY CRIME UNIT</br></center>
+			<hr>
+			
+			<p>
+				Agent Name:
+				<input class="alignRight" type="text" id="username" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			<p>
+				Callsign:
+				<input class="alignRight" type="text" id="callsign" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			
+			<hr>
+			
+			<p style="display: inline;">
+				Start Time:
+				<div class="alignRight">
+					<input type="text" id="startTime" style="height:23px;width:100px;font-size:13pt;" autocomplete="off">
+					<input type="radio" value="AM" name="start_AMPM" id="start_AM" checked>AM</input>
+					<input type="radio" value="PM" name="start_AMPM" id="start_PM">PM</input>
+				</div>
+			</p>
+			<p style="display: inline;">
+				End Time:
+				<div class="alignRight">
+					<input type="text" id="endTime" style="height:23px;width:100px;font-size:13pt;" autocomplete="off">
+					<input type="radio" value="AM" name="end_AMPM" id="end_AM" checked>AM</input>
+					<input type="radio" value="PM" name="end_AMPM" id="end_PM">PM</input>
+				</div>
+			</p>
+			<p>
+				Timezone:
+				<input class="alignRight" type="text" id="timezone" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			
+			<hr>
+			
+			<p>
+				Start Proof:
+				<input class="alignRight" type="text" id="startProof" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			<p>
+				End Proof:
+				<input class="alignRight" type="text" id="endProof" style="height:23px;width:200px;font-size:13pt;" autocomplete="off">
+			</p>
+			
+			<hr>
+			
+			<p>
+				<input type="checkbox" id="extraNotesBtn" onclick="toggleExtraNotes()">Include summary?</input>
+				<textarea rows="8" id="extraNotes" class="hide" placeholder="Enter summary here." class="hide"></textarea>
+			</p>
+			
+			<button class="genBtn" onclick="generate()">GENERATE</button>
+		</div>
+		
+		<div class="hide" id="finalDiv">
+			<h2>SHIFT LOG</h2>
+			<p>Paste this in the shift log channel.</p>
+			
+			<textarea readonly rows="25" cols="80" id="final">Agent Name: 
+Callsign: 
+
+Start Time: 
+End Time: 
+
+Start Proof: 
+End Proof: 
+
+Summary:
+			</textarea>
+			
+			<br> <br>
+			<button class="genBtn" style="width:200px;" onclick="goBack()">GO BACK</button>
+		</div>
+	</body>
+	
+	<script>
+	function getRadioButtonValue(id, defaultValue) {
+		var radios = document.getElementsByName(id);
+		
+		for (var i = 0, length = radios.length; i < length; i++) {
+		  if (radios[i].checked) {
+			return radios[i].value;
+		  }
+		}
+		
+		return defaultValue;
+	}
+	
+	function checkEmpty(value, err) {
+		if (value.trim() == "") {
+			alert(err);
+			return true;
+		}
+		return false;
+	}
+	
+	function generate() {
+		let username = document.getElementById("username").value;
+		if (checkEmpty(username, "Must enter username!")) return;
+		let callsign = document.getElementById("callsign").value;
+		if (checkEmpty(callsign, "Must enter callsign!")) return;
+		let timeStart = document.getElementById("startTime").value;
+		if (checkEmpty(timeStart, "Must enter start time!")) return;
+		let timeEnd = document.getElementById("endTime").value;
+		if (checkEmpty(timeEnd, "Must enter end time!")) return;
+		let timeStartAMPM = getRadioButtonValue("start_AMPM", "AM");
+		let timeEndAMPM = getRadioButtonValue("end_AMPM", "AM");
+		let timezone = document.getElementById("timezone").value;
+		if (checkEmpty(timezone, "Must enter timezone!")) return;
+		let startProof = document.getElementById("startProof").value;
+		if (checkEmpty(startProof, "Must enter start proof!")) return;
+		let endProof = document.getElementById("endProof").value;
+		if (checkEmpty(endProof, "Must enter end proof!")) return;
+		
+		let extraNotes = document.getElementById("extraNotes").value.trim();
+		
+		timeStart = timeStart.split(":");
+		timeEnd = timeEnd.split(":");
+		
+		if (timeStart[0].length == 1) {
+			timeStart[0] = "0" + timeStart[0];
+		}
+		if (timeEnd[0].length == 1) {
+			timeEnd[0] = "0" + timeEnd[0];
+		}
+		if (extraNotes == "") {
+			extraNotes = "N/A";
+		}
+		
+		timeStart = timeStart[0] + ":" + timeStart[1]
+		timeEnd = timeEnd[0] + ":" + timeEnd[1]
+		
+		document.getElementById("final").innerHTML = `Agent Name: ${username}
+Callsign: ${callsign}
+
+Start Time: ${timeStart} ${timeStartAMPM} ${timezone}
+End Time: ${timeEnd} ${timeEndAMPM} ${timezone}
+
+Start Proof: ${startProof}
+End Proof: ${endProof}
+
+Summary: ${extraNotes}
+`;
+		
+		document.getElementById("enterValues").className = "hide";
+		document.getElementById("finalDiv").className = "";
+	}
+	
+	function goBack() {
+		document.getElementById("enterValues").className = "box";
+		document.getElementById("finalDiv").className = "hide";
+	}
+	
+	function toggleExtraNotes() {
+		if (document.getElementById("extraNotesBtn").checked) {
+			document.getElementById("extraNotes").className = "fillWidth";
+			document.getElementById("extraNotes").innerHTML = "";
+			document.getElementById("extraNotes").value = "";
+		} else {
+			document.getElementById("extraNotes").className = "hide";
+			document.getElementById("extraNotes").innerHTML = "";
+			document.getElementById("extraNotes").value = "";
+		}
+	}
+		
+	window.onbeforeunload = function() {
+	   return "Are you sure you want to exit/reload?";
+	};
+	</script>
+</html>
